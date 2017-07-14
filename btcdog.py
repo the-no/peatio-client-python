@@ -2,7 +2,7 @@ import time
 import urllib2
 from lib.client import Client, get_api_path
 
-client = Client(access_key='Pv60mDOGQgsp8WZyQFt5rT3trxV0ro3uEHeqETmF', secret_key='PBnb7nSUTXRLsucATgX4w3KjMsXmn2bPd13mxeoZ')
+client = Client(access_key='', secret_key='')
 
 #demo of GET APIs
 

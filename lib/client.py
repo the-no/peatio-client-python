@@ -3,9 +3,20 @@ import json
 
 from lib.auth import Auth
 
-BASE_URL = 'https://peatio.com'
+BASE_URL = 'https://yunbi.com'
 
 API_BASE_PATH = '/api/v2'
+
+API_AUTH_DICT = {
+    # GET
+    '/api/v2/members/me.json':True,
+    '/api/v2/orders.json':True,
+    '/api/v2/order.json':True,
+    '/api/v2/order_book.json':True,
+    '/api/v2/trades.json':True,
+    '/api/v2/trades/my.json':True,
+}
+
 API_PATH_DICT = {
     # GET
     'members': '%s/members/me.json',
@@ -38,7 +49,6 @@ API_PATH_DICT = {
     #TODO multi orders API
     'multi_orders': '%s/orders/multi.json',
 }
-
 def get_api_path(name):
     path_pattern = API_PATH_DICT[name]
     return path_pattern % API_BASE_PATH
@@ -53,9 +63,17 @@ class Client():
             self.auth = Auth(ACCESS_KEY, SECRET_KEY)
 
     def get(self, path, params=None):
-        verb = "GET"
-        signature, query = self.auth.sign_params(verb, path, params)
-        url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
+        verb = "GET" 
+        url = ""
+        if API_AUTH_DICT.get(path ,False):
+            signature, query = self.auth.sign_params(verb, path, params)
+            url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
+        else:
+            if params is not None:
+                query = self.auth.urlencode(params)
+                url = "%s%s?%s" % (BASE_URL, path, query)
+            else:
+                url = "%s%s" % (BASE_URL, path)
         resp = urllib2.urlopen(url)
         data = resp.readlines()
         if len(data):
